@@ -129,7 +129,13 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        idx = self.hash_index(key)
 
+        if self.buckets[idx]:
+            val = self.buckets[idx].value
+            return val
+        else:
+            return None
 
     def resize(self, new_capacity):
         """
