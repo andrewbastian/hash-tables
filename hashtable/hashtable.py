@@ -38,6 +38,7 @@ class HashTable:
         """
         # Your code here
 
+        return len(self.buckets)
 
     def get_load_factor(self):
         """
@@ -46,16 +47,32 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        loadf = self.size / self.capacity
 
+        return loadf
 
     def fnv1(self, key):
         """
         FNV-1 Hash, 64-bit
 
         Implement this, and/or DJB2.
-        """
 
+
+        """
+    # algorithm fnv-1a is
         # Your code here
+        hash = 14695981039346656037
+        # hash := FNV_offset_basis do
+        hashed = key.encode()
+        for byte_of_data in hashed:
+        # for each byte_of_data to be hashed
+            hash = hash * 1099511628211
+            # hash := hash × FNV_prime
+            hash = hash ^ byte_of_data
+            # hash := hash XOR byte_of_data
+
+        return hash
+        # return hash
 
 
     def djb2(self, key):
