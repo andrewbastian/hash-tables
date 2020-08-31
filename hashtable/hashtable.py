@@ -102,7 +102,11 @@ class HashTable:
         Implement this.
         """
         # Your code here
-
+        # Which slot (index) in the table is the value going?
+        idx = self.hash_index(key)
+        res = HashTableEntry(key, value)
+        # Store the value at that slot
+        self.buckets[idx] = res
 
     def delete(self, key):
         """
