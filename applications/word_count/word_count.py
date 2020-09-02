@@ -1,7 +1,15 @@
+from collections import defaultdict
+
 def word_count(s):
-    # Your code here
+    ignore = ',":;,.-+=/\\|[]{}()*^&'
+    counter = defaultdict(int)
 
+    clean_up = s.translate(str.maketrans('','', ignore))
 
+    for i in clean_up.lower().split():
+        counter[i] += 1
+
+    return counter
 
 if __name__ == "__main__":
     print(word_count(""))
