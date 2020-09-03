@@ -1,7 +1,10 @@
 def no_dups(s):
-    # Your code here
+    if s is None:
+        return
 
-
+    lst = s.split()
+    setr = list(set(lst))
+    return setr
 
 if __name__ == "__main__":
     print(no_dups(""))
