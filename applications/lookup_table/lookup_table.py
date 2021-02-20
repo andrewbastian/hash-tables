@@ -1,4 +1,7 @@
-# Your code here
+import math
+import random
+
+d = {}
 
 
 def slowfun_too_slow(x, y):
@@ -16,7 +19,10 @@ def slowfun(x, y):
     """
     # Your code here
 
+    if (x, y) not in d:
+        d[(x, y)] = slowfun_too_slow(x, y)
 
+    return d[(x, y)]
 
 # Do not modify below this line!
 

@@ -7,6 +7,9 @@ class HashTableEntry:
         self.value = value
         self.next = None
 
+    def __repr__(self):
+        return f'NODE:({repr(self.value)})'
+
 
 # Hash table can't have fewer than this many slots
 MIN_CAPACITY = 8
@@ -20,9 +23,29 @@ class HashTable:
     Implement this.
     """
 
-    def __init__(self, capacity):
+    def __init__(self, capacity=MIN_CAPACITY):
         # Your code here
+        self.capacity = capacity
+        self.head = 0
+        self.buckets = [None] * self.capacity
 
+# DAY 2:
+    def __str__(self):
+        if self.head is None:
+            return '[EMPTY LIST]'
+
+        cur = self.head
+        string = ''
+
+        while cur is not None:
+            string += f'({cur.value})'
+
+            if cur.next is not None:
+                string += '-->'
+
+            cur = cur.next
+
+        return string
 
     def get_num_slots(self):
         """
@@ -35,7 +58,9 @@ class HashTable:
         Implement this.
         """
         # Your code here
-
+# DAY 1
+        return len(self.buckets)
+        
 
     def get_load_factor(self):
         """
@@ -44,6 +69,7 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        return self.head / self.capacity
 
 
     def fnv1(self, key):
@@ -51,9 +77,23 @@ class HashTable:
         FNV-1 Hash, 64-bit
 
         Implement this, and/or DJB2.
-        """
 
+
+        """
+    # algorithm fnv-1a is
         # Your code here
+        hash = 14695981039346656037
+        # hash := FNV_offset_basis do
+        hashed = key.encode()
+        for byte_of_data in hashed:
+        # for each byte_of_data to be hashed
+            hash = hash * 1099511628211
+            # hash := hash × FNV_prime
+            hash = hash ^ byte_of_data
+            # hash := hash XOR byte_of_data
+
+        return hash
+        # return hash
 
 
     def djb2(self, key):
@@ -63,15 +103,16 @@ class HashTable:
         Implement this, and/or FNV-1.
         """
         # Your code here
-
+        pass
 
     def hash_index(self, key):
         """
         Take an arbitrary key and return a valid integer index
         between within the storage capacity of the hash table.
         """
-        #return self.fnv1(key) % self.capacity
-        return self.djb2(key) % self.capacity
+        return self.fnv1(key) % self.capacity
+        # return self.djb2(key) % self.capacity
+
 
     def put(self, key, value):
         """
@@ -82,6 +123,48 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        # DAY 1
+                # Which slot (index) in the table is the value going?
+        """        idx = self.hash_index(key)
+        res = HashTableEntry(key, value)
+        # Store the value at that slot
+        self.buckets[idx] = res"""
+        # DAY 2
+        
+        idx = self.hash_index(key)
+        res = HashTableEntry(key, value)
+        cur = self.buckets[idx]
+
+        # if the bucket has no index:
+        if self.buckets[idx] is None:
+            # add the new entry to the unoccupied index
+            self.buckets[idx] = HashTableEntry(key, value)
+            # expand LinkedList by 1 node
+            self.head += 1
+            # if the HashTable is getting too small,
+            if self.get_load_factor() > 0.7:
+                # expand the Table by a factor of `2` 
+                self.resize(self.capacity * 2)
+        else:
+            while cur:
+                # check the buckets index key against the entry key for equality,
+                if cur.key is key:
+                    # check the buckets index value against the entry value,
+                    cur.value = value
+                    # if both are true do not make an entry
+                    return
+                # create new var equal to the buckets index
+                prev = cur
+                # move that index to the next node
+                cur = cur.next
+            # set our entry to the node after the one we are currently on
+            prev.next = res
+            # expand LinkedList by 1 Node
+            self.head += 1
+            # if HashTable is getting too small
+            if self.get_load_factor() > 0.7:
+                # expand HashTable by a factor of `2`
+                self.resize(self.capacity * 2)
 
 
     def delete(self, key):
@@ -93,7 +176,8 @@ class HashTable:
         Implement this.
         """
         # Your code here
-
+        idx = self.hash_index(key)
+        self.buckets[idx] = None
 
     def get(self, key):
         """
@@ -104,7 +188,13 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        idx = self.hash_index(key)
 
+        if self.buckets[idx]:
+            val = self.buckets[idx].value
+            return val
+        else:
+            return None
 
     def resize(self, new_capacity):
         """
@@ -115,6 +205,22 @@ class HashTable:
         """
         # Your code here
 
+        # DAY 2
+        new_table = HashTable(new_capacity)
+        # for each slot in table:
+        for head in self.buckets:
+            # for each element in the linked list in that slot:
+            if head:
+                # for each element in the linked list in that slot:
+                new_table.put(head.key, head.value)
+                if head.next:
+                    cur = head
+                    while cur.next:
+                        cur = cur.next
+                        new_table.put(cur.key, cur.value)
+
+        self.buckets = new_table.buckets
+        self.capacity = new_table.capacity
 
 
 if __name__ == "__main__":
